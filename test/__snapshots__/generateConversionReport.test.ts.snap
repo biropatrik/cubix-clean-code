@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Generate conversion report tests should generate conversion report 1`] = `
+"Conversion Report:
+37000
+38000
+40000"
+`;
