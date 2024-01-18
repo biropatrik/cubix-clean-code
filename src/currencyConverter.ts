@@ -1,6 +1,5 @@
-import { AmountValidationError } from "./exceptions/AmountValidationError";
+import { ValidationError } from "./exceptions/ValidationError";
 import { ExchangeRateValidationError } from "./exceptions/ExchangeRateValidationError";
-import { UnknownError } from "./exceptions/UnknownError";
 import { IExchangeRateService } from "./exchangeRateService";
 
 export class CurrencyConverter {
@@ -14,20 +13,13 @@ export class CurrencyConverter {
 
         try {
             this.validateAmount(amount);
-        } catch (error) {
-            if (error instanceof Error) {
-                throw new AmountValidationError(error.message);
-            }
-            throw new UnknownError('Unknown error happened');
-        }
-
-        try {
             this.validateExchangeRate(exchangeRate);
         } catch (error) {
             if (error instanceof Error) {
-                throw new ExchangeRateValidationError(error.message);
+                throw new ValidationError(error.message);
+            } else {
+                throw error;
             }
-            throw new UnknownError('Unknown error happened');
         }
 
         return amount * exchangeRate;
@@ -51,8 +43,9 @@ export class CurrencyConverter {
             } catch (error) {
                 if (error instanceof Error) {
                     throw new ExchangeRateValidationError(error.message);
+                } else {
+                    throw error;
                 }
-                throw new UnknownError('Unknown error happened');
             }
 
             this.calculateConversion(exchangeRate, conversions, currentDate);

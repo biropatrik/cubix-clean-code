@@ -1,5 +1,5 @@
 import { CurrencyConverter } from "../src/currencyConverter";
-import { AmountValidationError } from "../src/exceptions/AmountValidationError";
+import { ValidationError } from "../src/exceptions/ValidationError";
 import { ExchangeRateValidationError } from "../src/exceptions/ExchangeRateValidationError";
 import { IExchangeRateService } from "../src/exchangeRateService";
 import { mock, mockReset } from 'jest-mock-extended';
@@ -8,6 +8,8 @@ const mockedExchangeRateService = mock<IExchangeRateService>();
 
 describe('Convert tests', () => {
     let currencyConverter: CurrencyConverter;
+    const fromCurrency = 'eur';
+    const toCurrency = 'huf';
 
     beforeEach(() => {
         mockReset(mockedExchangeRateService);
@@ -16,62 +18,39 @@ describe('Convert tests', () => {
 
     describe('Happy paths', () => {
 
-        it('should convert with positive', () => {
+        it.each`
+        testName | value | mockReturnValue | expectedValue
+        ${'convert with positive number'} | ${2} | ${400} | ${800}
+        ${'convert with zero'} | ${0} | ${400} | ${0}
+        `('should $testName', ({ value, mockReturnValue, expectedValue }) => {
             // Arrange
-            mockedExchangeRateService.getExchangeRate.mockReturnValue(400);
+            mockedExchangeRateService.getExchangeRate.mockReturnValue(mockReturnValue);
 
             // Act
-            const actual = currencyConverter.Convert(2, 'eur', 'huf');
+            const actual = currencyConverter.Convert(value, fromCurrency, toCurrency);
 
             // Assert
             expect(mockedExchangeRateService.getExchangeRate).toHaveBeenCalledTimes(1);
-            expect(mockedExchangeRateService.getExchangeRate).toHaveBeenCalledWith('eur', 'huf');
-            expect(mockedExchangeRateService.getExchangeRate).toHaveReturnedWith(400);
-            expect(actual).toBe(800);
-        })
-
-        it('should convert with zero', () => {
-            // Arrange
-            mockedExchangeRateService.getExchangeRate.mockReturnValue(400);
-
-            // Act
-            const actual = currencyConverter.Convert(0, 'eur', 'huf');
-
-            // Assert
-            expect(mockedExchangeRateService.getExchangeRate).toHaveBeenCalledTimes(1);
-            expect(mockedExchangeRateService.getExchangeRate).toHaveBeenCalledWith('eur', 'huf');
-            expect(mockedExchangeRateService.getExchangeRate).toHaveReturnedWith(400);
-            expect(actual).toBe(0);
+            expect(mockedExchangeRateService.getExchangeRate).toHaveBeenCalledWith(fromCurrency, toCurrency);
+            expect(mockedExchangeRateService.getExchangeRate).toHaveReturnedWith(mockReturnValue);
+            expect(actual).toBe(expectedValue);
         })
     })
 
 
     describe('Error paths', () => {
-
-        it('should throw an ExchangeRateValidationError', () => {
+        it.each`
+        testName | value | mockReturnValue | error
+        ${'ExchangeRateValidationError - Unable to fetch exchange rate.'} | ${1} | ${NaN} | ${new ExchangeRateValidationError('Unable to fetch exchange rate.')}
+        ${'ValidationError'} | ${NaN} | ${400} | ${new ValidationError('Invalid amount input.')}
+        `('should throw a(n) $testName', ({value, mokcReturnValue, error}) => {
             // Arrange
-            const errorMessage = "Unable to fetch exchange rate.";
-            const error = new ExchangeRateValidationError(errorMessage);
-            const wrongMockReturnValue = NaN;
-
-            mockedExchangeRateService.getExchangeRate.mockReturnValue(wrongMockReturnValue);
+            mockedExchangeRateService.getExchangeRate.mockReturnValue(mokcReturnValue);
 
             // Act and assert
-            expect(() => currencyConverter.Convert(1, 'eur', 'huf')).toThrow(error);
+            expect(() => currencyConverter.Convert(value, fromCurrency, toCurrency)).toThrow(error);
             expect(mockedExchangeRateService.getExchangeRate).toHaveBeenCalledTimes(1);
-            expect(mockedExchangeRateService.getExchangeRate).toHaveBeenCalledWith('eur', 'huf');
-        })
-
-        it('should throw an AmountValidationError', () => {
-            // Arrange
-            const errorMessage = "Invalid amount input.";
-            const error = new AmountValidationError(errorMessage);
-            const wrongInput = NaN;
-
-            // Act and assert
-            expect(() => currencyConverter.Convert(wrongInput, 'eur', 'huf')).toThrow(error);
-            expect(mockedExchangeRateService.getExchangeRate).toHaveBeenCalledTimes(1);
-            expect(mockedExchangeRateService.getExchangeRate).toHaveBeenCalledWith('eur', 'huf');
+            expect(mockedExchangeRateService.getExchangeRate).toHaveBeenCalledWith(fromCurrency, toCurrency);
         })
     })
 })
