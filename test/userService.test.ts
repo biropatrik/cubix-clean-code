@@ -22,4 +22,20 @@ describe('UserService tests', () => {
             expect(result).toBe(expectedResult);
         });
     })
+
+    describe('Process user data tests', () => {
+        it.each`
+        testName | users | user | a | b | count | expectedResult
+        ${'found the given user'} | ${['Tom', 'Bill', 'Jack']} | ${'Tom'} | ${true} | ${true} | ${0} | ${'User found: Tom at index 0'}
+        ${'not found the given user'} | ${['Tom', 'Bill', 'Jack']} | ${'Test'} | ${true} | ${true} | ${0} | ${''}
+        ${'processing'} | ${[]} | ${''} | ${false} | ${true} | ${2} | ${'Processing... Processing... '}
+        ${'no action'} | ${[]} | ${''} | ${false} | ${false} | ${1} | ${'No action taken.'}
+        `('should $testName', ({ users, user, a, b, count, expectedResult}) => {
+            // Act
+            const result = sut.processUserData(a, b, users, user, count);
+
+            // Assert
+            expect(result).toBe(expectedResult);
+        });
+    })
 })
