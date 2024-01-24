@@ -41,4 +41,12 @@ class Student {
     constructor(name: string) {
         this.name = name;
     }
+
+    public getName() {
+        return this.name;
+    }
+
+    public setName(name: string) {
+        this.name = name;
+    }
 }
