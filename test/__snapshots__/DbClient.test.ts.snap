@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DbClient tests should add new course 1`] = `
+[
+  Course {
+    "name": "Data Analytics",
+    "students": [],
+  },
+  Course {
+    "name": "Project Management",
+    "students": [],
+  },
+  Course {
+    "name": "Java",
+    "students": [],
+  },
+  Course {
+    "name": "Power BI",
+    "students": [],
+  },
+]
+`;
+
+exports[`DbClient tests should return a course by name 1`] = `
+Course {
+  "name": "Java",
+  "students": [],
+}
+`;
+
+exports[`DbClient tests should return all courses 1`] = `
+[
+  Course {
+    "name": "Data Analytics",
+    "students": [],
+  },
+  Course {
+    "name": "Project Management",
+    "students": [],
+  },
+  Course {
+    "name": "Java",
+    "students": [],
+  },
+]
+`;

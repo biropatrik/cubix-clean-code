@@ -4,7 +4,9 @@ import { INotificationService } from "../abstraction/service/INotificationServic
 import { IPaymentService } from "../abstraction/service/IPaymentService";
 import { CourseAlreadyAddedException } from "../exception/CourseAlreadyAddedException";
 import { CourseNotFoundException } from "../exception/CourseNotFoundException";
+import { CourseNotPaidException } from "../exception/CourseNotPaidException";
 import { Course } from "../model/Course";
+import { Student } from "../model/Student";
 
 export class CourseService implements ICourseService {
 
@@ -33,5 +35,17 @@ export class CourseService implements ICourseService {
         }
 
         this.courseRepository.addCourse(course);
+    }
+
+    addStudentToCourse(student: Student, courseName: string): void {
+        const course = this.getCourseByName(courseName);
+
+        if (!this.paymentService.getIsOrderPayed(student)) {
+            throw new CourseNotPaidException('Course not paid yet!');
+        }
+
+        course.addStudent(student);
+
+        this.notificationService.sendNotifications(`${student.getName()} student was added to course.`);
     }
 }

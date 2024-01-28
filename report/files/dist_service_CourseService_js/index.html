@@ -44,11 +44,11 @@
   <div class="row">
     <div class="col-md-6">
       <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
-      <p class="stat">78.66</p>
+      <p class="stat">76.51</p>
     </div>
     <div class="col-md-6">
       <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
-      <p class="stat">29</p>
+      <p class="stat">38</p>
     </div>
   </div>
   <div class="row historical">
@@ -62,11 +62,11 @@
   <div class="row">
     <div class="col-md-6">
       <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
-      <p class="stat">18.70</p>
+      <p class="stat">20.20</p>
     </div>
     <div class="col-md-6">
       <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
-      <p class="stat">0.22</p>
+      <p class="stat">0.33</p>
     </div>
   </div>
 </div>
@@ -94,6 +94,7 @@ Object.defineProperty(exports, &quot;__esModule&quot;, { value: true });
 exports.CourseService = void 0;
 const CourseAlreadyAddedException_1 = require(&quot;../exception/CourseAlreadyAddedException&quot;);
 const CourseNotFoundException_1 = require(&quot;../exception/CourseNotFoundException&quot;);
+const CourseNotPaidException_1 = require(&quot;../exception/CourseNotPaidException&quot;);
 class CourseService {
     constructor(courseRepository, paymentService, notificationService) {
         this.courseRepository = courseRepository;
@@ -115,6 +116,14 @@ class CourseService {
             throw new CourseAlreadyAddedException_1.CourseAlreadyAddedException(&#039;Course already added!&#039;);
         }
         this.courseRepository.addCourse(course);
+    }
+    addStudentToCourse(student, courseName) {
+        const course = this.getCourseByName(courseName);
+        if (!this.paymentService.getIsOrderPayed(student)) {
+            throw new CourseNotPaidException_1.CourseNotPaidException(&#039;Course not paid yet!&#039;);
+        }
+        course.addStudent(student);
+        this.notificationService.sendNotifications(`${student.getName()} student was added to course.`);
     }
 }
 exports.CourseService = CourseService;</textarea>

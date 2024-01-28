@@ -1,11 +1,16 @@
 import { ICourseRepository } from "../src/abstraction/repository/ICourseRepository";
-import { INotificationService } from "../src/abstraction/service/INotificationService";
 import { IPaymentService } from "../src/abstraction/service/IPaymentService";
 import { CourseService } from "../src/service/CourseService";
 import { Course } from "../src/model/Course";
-import { CourseNotFoundException } from "../src/exception/CourseNotFoundException";
+import { Student } from "../src/model/Student";
 import { mock, mockReset } from 'jest-mock-extended';
+import { CourseNotFoundException } from "../src/exception/CourseNotFoundException";
 import { CourseAlreadyAddedException } from "../src/exception/CourseAlreadyAddedException";
+import { StudentAlreadyAddedException } from "../src/exception/StudentAlreadyAddedException";
+import { CourseNotPaidException } from "../src/exception/CourseNotPaidException";
+import { INotificationService } from "../src/abstraction/service/INotificationService";
+import { EmailClient } from "../src/client/EmailClient";
+import { NotificationService } from "../src/service/NotificationService";
 
 describe('CourseService tests', () => {
     let courseService: CourseService;
@@ -13,12 +18,18 @@ describe('CourseService tests', () => {
     const mockPaymentService = mock<IPaymentService>();
     const mockNotificationService = mock<INotificationService>();
 
+    let notificationService: NotificationService;
+    let emailClient: EmailClient;
+
     beforeEach(() => {
         mockReset(mockCourseRepository);
         mockReset(mockPaymentService);
         mockReset(mockNotificationService);
 
-        courseService = new CourseService(mockCourseRepository, mockPaymentService, mockNotificationService);
+        emailClient = new EmailClient();
+        notificationService = new NotificationService([emailClient]);
+
+        courseService = new CourseService(mockCourseRepository, mockPaymentService, notificationService);
     })
 
     describe('Happy paths', () => {
@@ -80,6 +91,29 @@ describe('CourseService tests', () => {
             expect(mockCourseRepository.getCourseByName).toHaveBeenCalledTimes(1);
             expect(mockCourseRepository.getCourseByName).toHaveBeenCalledWith(name);
         })
+
+        it('should add a student to a course and send notifications', () => {
+            // Arrange
+            const courseName = 'Test';
+            const course = new Course(courseName);
+            const studentName = 'John';
+            const student = new Student(studentName);
+            const email = 'Email: ';
+            const message = email.concat(studentName).concat(' student was added to course.');
+            const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+            mockCourseRepository.getCourseByName.mockReturnValue(course);
+            mockPaymentService.getIsOrderPayed.mockReturnValue(true);
+
+            // Act
+            courseService.addStudentToCourse(student, courseName);
+
+            // Assert
+            expect(mockCourseRepository.getCourseByName).toHaveBeenCalledTimes(1);
+            expect(mockCourseRepository.getCourseByName).toHaveBeenCalledWith(courseName);
+            expect(mockPaymentService.getIsOrderPayed).toHaveBeenCalledTimes(1);
+            expect(mockPaymentService.getIsOrderPayed).toHaveBeenCalledWith(student);
+            expect(consoleLogSpy).toHaveBeenCalledWith(message);
+        })
     })
 
     describe('Error paths', () => {
@@ -107,6 +141,55 @@ describe('CourseService tests', () => {
             expect(mockCourseRepository.addCourse).toHaveBeenCalledTimes(0);
             expect(mockCourseRepository.getCourseByName).toHaveBeenCalledTimes(1);
             expect(mockCourseRepository.getCourseByName).toHaveBeenCalledWith(name);
+        })
+
+        it('should get an exception if try to add a student to a non-existent course', () => {
+            // Arrange
+            const courseName = 'Test';
+            const student = new Student('John');
+            const exception = new CourseNotFoundException('Course not found with name: ' + courseName)
+            mockCourseRepository.getCourseByName.mockReturnValue(undefined);
+
+            // Act and assert
+            expect(() => courseService.addStudentToCourse(student, courseName)).toThrow(exception);
+            expect(mockCourseRepository.getCourseByName).toHaveBeenCalledTimes(1);
+            expect(mockCourseRepository.getCourseByName).toHaveBeenCalledWith(courseName);
+            expect(mockPaymentService.getIsOrderPayed).toHaveBeenCalledTimes(0);
+        })
+
+        it('should get an exception if try to add a student to the same course', () => {
+            // Arrange
+            const courseName = 'Test';
+            const student = new Student('John');
+            const course = new Course(courseName);
+            course.addStudent(student);
+            const exception = new StudentAlreadyAddedException('Student already added to the course!');
+            mockCourseRepository.getCourseByName.mockReturnValue(course);
+            mockPaymentService.getIsOrderPayed.mockReturnValue(true);
+
+            // Act and assert
+            expect(() => courseService.addStudentToCourse(student, courseName)).toThrow(exception);
+            expect(mockCourseRepository.getCourseByName).toHaveBeenCalledTimes(1);
+            expect(mockCourseRepository.getCourseByName).toHaveBeenCalledWith(courseName);
+            expect(mockPaymentService.getIsOrderPayed).toHaveBeenCalledTimes(1);
+            expect(mockPaymentService.getIsOrderPayed).toHaveBeenCalledWith(student);
+        })
+
+        it('should get an exception if try to add a student without paying', () => {
+            // Arrange
+            const courseName = 'Test';
+            const student = new Student('John');
+            const course = new Course(courseName, [student]);
+            const exception = new CourseNotPaidException('Course not paid yet!');
+            mockCourseRepository.getCourseByName.mockReturnValue(course);
+            mockPaymentService.getIsOrderPayed.mockReturnValue(false);
+
+            // Act and assert
+            expect(() => courseService.addStudentToCourse(student, courseName)).toThrow(exception);
+            expect(mockCourseRepository.getCourseByName).toHaveBeenCalledTimes(1);
+            expect(mockCourseRepository.getCourseByName).toHaveBeenCalledWith(courseName);
+            expect(mockPaymentService.getIsOrderPayed).toHaveBeenCalledTimes(1);
+            expect(mockPaymentService.getIsOrderPayed).toHaveBeenCalledWith(student);
         })
     })
 })
