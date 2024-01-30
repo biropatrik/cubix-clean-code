@@ -46,13 +46,23 @@ describe('DbClient tests', () => {
         // Arrange
         const courseName = 'Java';
         const student = new Student('John');
-        const expectedCourse = new Course(courseName, [student]);
 
         // Act
         dbClient.addStudentToCourse(student, courseName);
         const result = await dbClient.getCourseByName(courseName);
 
         // Assert
-        expect(result).toEqual(expectedCourse);
+        expect(result).toMatchSnapshot();
+    })
+
+    it('should get course statistics', async () => {
+        // Arrange
+        const courseName = 'Java';
+
+        // Act
+        const result = await dbClient.getCourseStatistics(courseName);
+
+        // Assert
+        expect(result).toMatchSnapshot();
     })
 })

@@ -21,6 +21,28 @@ exports[`DbClient tests should add new course 1`] = `
 ]
 `;
 
+exports[`DbClient tests should add student to a course 1`] = `
+Course {
+  "name": "Java",
+  "students": [
+    Student {
+      "courses": [],
+      "name": "John",
+    },
+  ],
+}
+`;
+
+exports[`DbClient tests should get course statistics 1`] = `
+CourseStatistic {
+  "courseName": "Java",
+  "lastAccessed": 2023-12-12T00:00:00.000Z,
+  "lecturesCompleted": 2,
+  "progress": 70,
+  "totalLectures": 5,
+}
+`;
+
 exports[`DbClient tests should return a course by name 1`] = `Promise {}`;
 
 exports[`DbClient tests should return all courses 1`] = `

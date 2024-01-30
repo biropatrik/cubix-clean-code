@@ -44,11 +44,11 @@
   <div class="row">
     <div class="col-md-6">
       <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
-      <p class="stat">83.43</p>
+      <p class="stat">83.02</p>
     </div>
     <div class="col-md-6">
       <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
-      <p class="stat">54</p>
+      <p class="stat">56</p>
     </div>
   </div>
   <div class="row historical">
@@ -62,11 +62,11 @@
   <div class="row">
     <div class="col-md-6">
       <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
-      <p class="stat">35.88</p>
+      <p class="stat">33.05</p>
     </div>
     <div class="col-md-6">
       <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
-      <p class="stat">0.60</p>
+      <p class="stat">0.65</p>
     </div>
   </div>
 </div>
@@ -102,9 +102,11 @@ var __awaiter = (this &amp;&amp; this.__awaiter) || function (thisArg, _argument
 Object.defineProperty(exports, &quot;__esModule&quot;, { value: true });
 exports.DbClient = void 0;
 const Course_1 = require(&quot;../model/Course&quot;);
+const CourseStatistic_1 = require(&quot;../model/CourseStatistic&quot;);
 class DbClient {
     constructor() {
         this.courses = [new Course_1.Course(&#039;Data Analytics&#039;), new Course_1.Course(&#039;Project Management&#039;), new Course_1.Course(&#039;Java&#039;)];
+        this.courseStatistic = new CourseStatistic_1.CourseStatistic(&#039;Java&#039;, 5, 2, 70, new Date(&#039;2023-12-12&#039;));
     }
     getCourseByName(name) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -138,7 +140,7 @@ class DbClient {
     }
     getCourseStatistics(courseName) {
         return __awaiter(this, void 0, void 0, function* () {
-            throw new Error(&quot;Method not implemented.&quot;);
+            return this.courseStatistic;
         });
     }
 }

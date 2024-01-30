@@ -11,6 +11,7 @@ import { CourseNotPaidException } from "../../src/exception/CourseNotPaidExcepti
 import { INotificationService } from "../../src/abstraction/service/INotificationService";
 import { EmailClient } from "../../src/client/EmailClient";
 import { NotificationService } from "../../src/service/NotificationService";
+import { CourseStatistic } from "../../src/model/CourseStatistic";
 
 describe('CourseService tests', () => {
     let courseService: CourseService;
@@ -114,6 +115,21 @@ describe('CourseService tests', () => {
             expect(mockPaymentService.getIsOrderPayed).toHaveBeenCalledTimes(1);
             expect(mockPaymentService.getIsOrderPayed).toHaveBeenCalledWith(student);
             expect(consoleLogSpy).toHaveBeenCalledWith(message);
+        })
+
+        it('should get a course statistics', async () => {
+            // Arrange
+            const name = 'test';
+            const expectedCourseStatistic = new CourseStatistic('Java', 5, 2, 70, new Date('2023-12-12'));
+            mockCourseRepository.getCourseStatistics.mockReturnValue(Promise.resolve(expectedCourseStatistic));
+
+            // Act
+            const result = await courseService.getCourseStatistics(name);
+
+            // Arrange
+            expect(mockCourseRepository.getCourseStatistics).toHaveBeenCalledTimes(1);
+            expect(mockCourseRepository.getCourseStatistics).toHaveBeenCalledWith(name);
+            expect(result).toBe(expectedCourseStatistic);
         })
     })
 

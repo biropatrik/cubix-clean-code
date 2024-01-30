@@ -5,7 +5,8 @@ import { Student } from "../model/Student";
 
 export class DbClient implements IDbClient {
 
-    private courses: Course[] = [new Course('Data Analytics'), new Course('Project Management'), new Course('Java')]
+    private courses: Course[] = [new Course('Data Analytics'), new Course('Project Management'), new Course('Java')];
+    private courseStatistic = new CourseStatistic('Java', 5, 2, 70, new Date('2023-12-12'));
 
     async getCourseByName(name: string): Promise<Course | undefined> {
         let result = undefined;
@@ -34,6 +35,6 @@ export class DbClient implements IDbClient {
     }
 
     async getCourseStatistics(courseName: string): Promise<CourseStatistic> {
-        throw new Error("Method not implemented.");
+        return this.courseStatistic;
     }
 }
