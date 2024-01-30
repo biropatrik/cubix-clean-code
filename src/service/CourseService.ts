@@ -6,6 +6,7 @@ import { CourseAlreadyAddedException } from "../exception/CourseAlreadyAddedExce
 import { CourseNotFoundException } from "../exception/CourseNotFoundException";
 import { CourseNotPaidException } from "../exception/CourseNotPaidException";
 import { Course } from "../model/Course";
+import { CourseStatistic } from "../model/CourseStatistic";
 import { Student } from "../model/Student";
 
 export class CourseService implements ICourseService {
@@ -15,9 +16,9 @@ export class CourseService implements ICourseService {
         private paymentService: IPaymentService,
         private notificationService: INotificationService) { }
 
-    getCourseByName(name: string): Course {
-        let course = this.courseRepository.getCourseByName(name);
-        
+    async getCourseByName(name: string): Promise<Course> {
+        let course = await this.courseRepository.getCourseByName(name);
+
         if (course === undefined) {
             throw new CourseNotFoundException('Course not found with name: ' + name);
         }
@@ -25,27 +26,31 @@ export class CourseService implements ICourseService {
         return course;
     }
 
-    getAllCourses(): Course[] {
-        return this.courseRepository.getAllCourses();
+    async getAllCourses(): Promise<Course[]> {
+        return await this.courseRepository.getAllCourses();
     }
     
-    addCourse(course: Course): void {
-        if (this.courseRepository.getCourseByName(course.getName()) !== undefined) {
+    async addCourse(course: Course): Promise<void> {
+        if (await this.courseRepository.getCourseByName(course.getName()) !== undefined) {
             throw new CourseAlreadyAddedException('Course already added!');
         }
 
-        this.courseRepository.addCourse(course);
+        await this.courseRepository.addCourse(course);
     }
 
-    addStudentToCourse(student: Student, courseName: string): void {
-        const course = this.getCourseByName(courseName);
+    async addStudentToCourse(student: Student, courseName: string): Promise<void> {
+        let course = await this.getCourseByName(courseName);
 
-        if (!this.paymentService.getIsOrderPayed(student)) {
+        if (!await this.paymentService.getIsOrderPayed(student)) {
             throw new CourseNotPaidException('Course not paid yet!');
         }
 
         course.addStudent(student);
 
         this.notificationService.sendNotifications(`${student.getName()} student was added to course.`);
+    }
+
+    async getCourseStatistics(courseName: string): Promise<CourseStatistic> {
+        return await this.courseRepository.getCourseStatistics(courseName);
     }
 }

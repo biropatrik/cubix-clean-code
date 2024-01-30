@@ -1,12 +1,13 @@
 import { IDbClient } from "../abstraction/client/IDbClient";
 import { Course } from "../model/Course";
+import { CourseStatistic } from "../model/CourseStatistic";
 import { Student } from "../model/Student";
 
 export class DbClient implements IDbClient {
 
     private courses: Course[] = [new Course('Data Analytics'), new Course('Project Management'), new Course('Java')]
 
-    getCourseByName(name: string): Course | undefined {
+    async getCourseByName(name: string): Promise<Course | undefined> {
         let result = undefined;
         for (const course of this.courses) {
             if (course.getName() === name) {
@@ -16,19 +17,23 @@ export class DbClient implements IDbClient {
         return result;
     }
 
-    getAllCourses(): Course[] {
+    async getAllCourses(): Promise<Course[]> {
         return this.courses;
     }
 
-    addCourse(course: Course): void {
+    async addCourse(course: Course): Promise<void> {
         this.courses.push(course);
     }
 
-    addStudentToCourse(student: Student, courseName: string): void {
+    async addStudentToCourse(student: Student, courseName: string): Promise<void> {
         for (const course of this.courses) {
             if (course.getName() === courseName) {
                 course.addStudent(student);
             }
         }
+    }
+
+    async getCourseStatistics(courseName: string): Promise<CourseStatistic> {
+        throw new Error("Method not implemented.");
     }
 }

@@ -1,6 +1,6 @@
-import { NotificationService } from "../src/service/NotificationService";
-import { EmailClient } from "../src/client/EmailClient";
-import { PushNotificationClient } from "../src/client/PushNotificationClient";
+import { NotificationService } from "../../src/service/NotificationService";
+import { EmailClient } from "../../src/client/EmailClient";
+import { PushNotificationClient } from "../../src/client/PushNotificationClient";
 
 describe('NotificationService tests', () => {
     let notificationService: NotificationService;

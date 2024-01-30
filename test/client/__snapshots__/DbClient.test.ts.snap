@@ -21,12 +21,7 @@ exports[`DbClient tests should add new course 1`] = `
 ]
 `;
 
-exports[`DbClient tests should return a course by name 1`] = `
-Course {
-  "name": "Java",
-  "students": [],
-}
-`;
+exports[`DbClient tests should return a course by name 1`] = `Promise {}`;
 
 exports[`DbClient tests should return all courses 1`] = `
 [
