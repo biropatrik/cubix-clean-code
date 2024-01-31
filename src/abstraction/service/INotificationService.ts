@@ -1,3 +1,3 @@
 export interface INotificationService {
-    sendNotifications(message: string): void;
+    sendNotifications(message: string): Promise<void>;
 }

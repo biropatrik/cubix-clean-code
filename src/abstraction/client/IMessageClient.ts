@@ -1,3 +1,3 @@
 export interface IMessageClient {
-    sendNotification(message: string): void;
+    sendNotification(message: string): Promise<void>;
 }

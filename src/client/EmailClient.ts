@@ -4,7 +4,7 @@ export class EmailClient implements IMessageClient {
 
     readonly EMAIL: string = 'Email: ';
 
-    sendNotification(message: string): void {
+    async sendNotification(message: string): Promise<void> {
         console.log(this.EMAIL.concat(message));
     }
 

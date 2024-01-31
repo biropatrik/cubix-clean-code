@@ -4,7 +4,7 @@ export class PushNotificationClient implements IMessageClient {
 
     readonly PUSH: string = 'Push: ';
 
-    sendNotification(message: string): void {
+    async sendNotification(message: string): Promise<void> {
         console.log(this.PUSH.concat(message));
     }
 

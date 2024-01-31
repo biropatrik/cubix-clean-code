@@ -5,7 +5,7 @@ export class NotificationService implements INotificationService {
 
     constructor(private messages: IMessageClient[]) { }
 
-    sendNotifications(message: string): void {
+    async sendNotifications(message: string): Promise<void> {
         this.messages.forEach(client => { client.sendNotification(message); })
     }
 }

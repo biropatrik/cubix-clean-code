@@ -19,7 +19,7 @@ export class CourseService implements ICourseService {
     async getCourseByName(name: string): Promise<Course> {
         let course = await this.courseRepository.getCourseByName(name);
 
-        if (course === undefined) {
+        if (!course) {
             throw new CourseNotFoundException('Course not found with name: ' + name);
         }
 
@@ -47,7 +47,7 @@ export class CourseService implements ICourseService {
 
         course.addStudent(student);
 
-        this.notificationService.sendNotifications(`${student.getName()} student was added to course.`);
+        await this.notificationService.sendNotifications(`${student.getName()} student was added to course.`);
     }
 
     async getCourseStatistics(courseName: string): Promise<CourseStatistic> {
