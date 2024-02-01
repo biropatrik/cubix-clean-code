@@ -88,23 +88,13 @@ describe('CourseRepository tests', () => {
     })
 
     describe('Error paths', () => {
-        it('should throw a network exception when call getCourseByName', async () => {
+        it.each`
+        testName | exception | expectedException
+        ${'network exception'} | ${new NetworkException('Network error')} | ${new NetworkException('Network error')}
+        ${'unknown exception'} | ${new Error('error')} | ${new UnknownException('Unknown error happened.')}
+        `('should throw a(n) $testName when call getCourseByName', async ({ exception, expectedException }) => {
             // Arrange
             const courseName = 'Test';
-            const exception = new NetworkException('Network error');
-            mockDbClient.getCourseByName.mockImplementation(() => { throw exception });
-
-            // Act and assert
-            await expect(() => courseRepository.getCourseByName(courseName)).rejects.toThrow(exception);
-            expect(mockDbClient.getCourseByName).toHaveBeenCalledTimes(1);
-            expect(mockDbClient.getCourseByName).toHaveBeenCalledWith(courseName);
-        })
-
-        it('should throw an unknown exception when call getCourseByName', async () => {
-            // Arrange
-            const courseName = 'Test';
-            const exception = new Error('error');
-            const expectedException = new UnknownException('Unknown error happened.');
             mockDbClient.getCourseByName.mockImplementation(() => { throw exception });
 
             // Act and assert
@@ -113,21 +103,12 @@ describe('CourseRepository tests', () => {
             expect(mockDbClient.getCourseByName).toHaveBeenCalledWith(courseName);
         })
 
-        it('should throw a network exception when call getAllCourses', async () => {
+        it.each`
+        testName | exception | expectedException
+        ${'network exception'} | ${new NetworkException('Network error')} | ${new NetworkException('Network error')}
+        ${'unknown exception'} | ${new Error('error')} | ${new UnknownException('Unknown error happened.')}
+        `('should throw a(n) $testName when call getAllCourses', async ({ exception, expectedException }) => {
             // Arrange
-            const exception = new NetworkException('Network error');
-            mockDbClient.getAllCourses.mockImplementation(() => { throw exception });
-
-            // Act and assert
-            await expect(() => courseRepository.getAllCourses()).rejects.toThrow(exception);
-            expect(mockDbClient.getAllCourses).toHaveBeenCalledTimes(1);
-            expect(mockDbClient.getAllCourses).toHaveBeenCalledWith();
-        })
-
-        it('should throw an unknown exception when call getAllCourses', async () => {
-            // Arrange
-            const exception = new Error('error');
-            const expectedException = new UnknownException('Unknown error happened.');
             mockDbClient.getAllCourses.mockImplementation(() => { throw exception });
 
             // Act and assert
@@ -136,23 +117,13 @@ describe('CourseRepository tests', () => {
             expect(mockDbClient.getAllCourses).toHaveBeenCalledWith();
         })
 
-        it('should throw a network exception when call addCourse', async () => {
+        it.each`
+        testName | exception | expectedException
+        ${'network exception'} | ${new NetworkException('Network error')} | ${new NetworkException('Network error')}
+        ${'unknown exception'} | ${new Error('error')} | ${new UnknownException('Unknown error happened.')}
+        `('should throw a(n) $testName when call addCourse', async ({ exception, expectedException }) => {
             // Arrange
             const course = new Course('Test');
-            const exception = new NetworkException('Network error');
-            mockDbClient.addCourse.mockImplementation(() => { throw exception });
-
-            // Act and assert
-            await expect(() => courseRepository.addCourse(course)).rejects.toThrow(exception);
-            expect(mockDbClient.addCourse).toHaveBeenCalledTimes(1);
-            expect(mockDbClient.addCourse).toHaveBeenCalledWith(course);
-        })
-
-        it('should throw an unknown exception when call addCourse', async () => {
-            // Arrange
-            const course = new Course('Test');
-            const exception = new Error('error');
-            const expectedException = new UnknownException('Unknown error happened.');
             mockDbClient.addCourse.mockImplementation(() => { throw exception });
 
             // Act and assert
@@ -161,25 +132,14 @@ describe('CourseRepository tests', () => {
             expect(mockDbClient.addCourse).toHaveBeenCalledWith(course);
         })
 
-        it('should throw a network exception when call addStudentToCourse', async () => {
+        it.each`
+        testName | exception | expectedException
+        ${'network exception'} | ${new NetworkException('Network error')} | ${new NetworkException('Network error')}
+        ${'unknown exception'} | ${new Error('error')} | ${new UnknownException('Unknown error happened.')}
+        `('should throw a(n) $testName when call addStudentToCourse', async ({ exception, expectedException }) => {
             // Arrange
             const courseName = 'Test';
             const student = new Student('John');
-            const exception = new NetworkException('Network error');
-            mockDbClient.addStudentToCourse.mockImplementation(() => { throw exception });
-
-            // Act and assert
-            await expect(() => courseRepository.addStudentToCourse(student, courseName)).rejects.toThrow(exception);
-            expect(mockDbClient.addStudentToCourse).toHaveBeenCalledTimes(1);
-            expect(mockDbClient.addStudentToCourse).toHaveBeenCalledWith(student, courseName);
-        })
-
-        it('should throw an unknown exception when call addStudentToCourse', async () => {
-            // Arrange
-            const courseName = 'Test';
-            const student = new Student('John');
-            const exception = new Error('error');
-            const expectedException = new UnknownException('Unknown error happened.');
             mockDbClient.addStudentToCourse.mockImplementation(() => { throw exception });
 
             // Act and assert
@@ -188,23 +148,13 @@ describe('CourseRepository tests', () => {
             expect(mockDbClient.addStudentToCourse).toHaveBeenCalledWith(student, courseName);
         })
 
-        it('should throw a network exception when call getCourseStatistics', async () => {
+        it.each`
+        testName | exception | expectedException
+        ${'network exception'} | ${new NetworkException('Network error')} | ${new NetworkException('Network error')}
+        ${'unknown exception'} | ${new Error('error')} | ${new UnknownException('Unknown error happened.')}
+        `('should throw a(n) $testName when call getCourseStatistics', async ({ exception, expectedException }) => {
             // Arrange
             const courseName = 'Test';
-            const exception = new NetworkException('Network error');
-            mockDbClient.getCourseStatistics.mockImplementation(() => { throw exception });
-
-            // Act and assert
-            await expect(() => courseRepository.getCourseStatistics(courseName)).rejects.toThrow(exception);
-            expect(mockDbClient.getCourseStatistics).toHaveBeenCalledTimes(1);
-            expect(mockDbClient.getCourseStatistics).toHaveBeenCalledWith(courseName);
-        })
-
-        it('should throw an unknown exception when call getCourseStatistics', async () => {
-            // Arrange
-            const courseName = 'Test';
-            const exception = new Error('error');
-            const expectedException = new UnknownException('Unknown error happened.');
             mockDbClient.getCourseStatistics.mockImplementation(() => { throw exception });
 
             // Act and assert
